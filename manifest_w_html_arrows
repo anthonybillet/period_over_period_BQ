@@ -1,0 +1,28 @@
+project_name: "your_project_here"
+
+constant: html_arrows_up_good {
+  value: "{% if value > 0 %}
+          {% assign indicator = \"green,▲\" | split: ',' %}
+          {% elsif value < 0 %}
+          {% assign indicator = \"red,▼\" | split: ',' %}
+          {% else %}
+          {% assign indicator = \"black,▬\" | split: ',' %}
+          {% endif %}"
+}
+
+constant: html_arrows_up_bad {
+  value: "{% if value > 0 %}
+          {% assign indicator = \"red,▲\" | split: ',' %}
+          {% elsif value < 0 %}
+          {% assign indicator = \"green,▼\" | split: ',' %}
+          {% else %}
+          {% assign indicator = \"black,▬\" | split: ',' %}
+          {% endif %}"
+}
+
+# # Use local_dependency: To enable referencing of another project
+# # on this instance with include: statements
+#
+# local_dependency: {
+#   project: "name_of_other_project"
+# }
