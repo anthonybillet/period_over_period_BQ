@@ -1,0 +1,84 @@
+view: period_over_period {
+  extension: required
+
+  filter: current_date_range {
+    type: date
+    view_label: "Z) Period Over Period Analysis"
+    label: "1. Current Date Range"
+    description: "Select the current date range you are interested in. Make sure any other filter on Date covers this period, or is removed."
+  }
+
+  dimension: current_period_start {
+    hidden:  yes
+    view_label: "Z) Period Over Period Analysis"
+    description: "Calculates the start of the previous period"
+    type: date
+    convert_tz: no
+    sql:{% date_start current_date_range %};;
+  }
+
+  dimension: current_period_end {
+    hidden:  yes
+    view_label: "Z) Period Over Period Analysis"
+    description: "Calculates the start of the previous period"
+    type: date
+    convert_tz: no
+    sql:DATE_ADD({% date_end current_date_range %},INTERVAL -1  DAY);;
+  }
+
+
+  dimension: days_in_period {
+    hidden:  yes
+    view_label: "Z) Period Over Period Analysis"
+    description: "Gives the number of days in the current period date range"
+    type: duration_day
+    convert_tz: no
+    sql_start: ${current_period_start} ;;
+    sql_end: DATE_ADD(${current_period_end}, INTERVAL 1  DAY)  ;;
+  }
+
+
+  dimension: previous_period_start {
+    hidden:  yes
+    view_label: "Z) Period Over Period Analysis"
+    description: "Calculates the start of the previous period"
+    type: date
+    convert_tz: no
+    sql:DATE_ADD(${current_period_start},INTERVAL -${days_in_period}  DAY);;
+  }
+
+  dimension: previous_period_end {
+    hidden:  yes
+    view_label: "Z) Period Over Period Analysis"
+    description: "Calculates the start of the previous period"
+    type: date
+    convert_tz: no
+    sql:DATE_ADD(${current_period_start},INTERVAL -1  DAY);;
+  }
+
+
+
+
+
+  # Put this in the view file that contains the date field you want to use for Period over Period
+
+  # dimension: current_previous_period {
+  #   view_label: "Z) Period Over Period Analysis"
+  #   label: "Current/Previous Period?"
+  #   hidden: no
+  #   type: string
+  #   sql: CASE
+  #             WHEN ${some_date_field_raw} BETWEEN ${current_period_start} AND ${current_period_end} THEN 'Current Period'
+  #             WHEN ${some_date_field_raw} BETWEEN ${previous_period_start} AND ${previous_period_end} THEN 'Previous Period'
+  #             ELSE NULL
+  #         END;;
+  # }
+
+
+
+
+
+
+
+
+}
