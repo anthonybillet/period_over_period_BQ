@@ -1,0 +1,129 @@
+include: "/Industry_Reports/industry_view_ga_pub.view.lkml"
+include: "/period_over_period.view.lkml"
+view: +industry_view {
+
+  ### core stuff
+  extends: [period_over_period]
+
+  filter: current_date_range {
+    sql: ${current_previous_period} IS NOT NULL AND ${date_raw} BETWEEN ${previous_period_start} AND ${current_period_end} ;;
+  }
+
+  dimension: current_previous_period {
+    view_label: "Z) Period Over Period Analysis"
+    label: "Current/Previous Period?"
+    hidden: no
+    type: string
+    sql: CASE
+              WHEN ${date_raw} BETWEEN ${current_period_start} AND ${current_period_end} THEN 'Current Period'
+              WHEN ${date_raw} BETWEEN ${previous_period_start} AND ${previous_period_end} THEN 'Previous Period'
+              ELSE NULL
+          END;;
+  }
+
+  ### duplicate measures for the periods
+
+  #cost
+  measure: total_cost_current {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${cost} ;;
+    description: "Total cost from the platform"
+    label: "Cost (Current Period)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Current Period"]
+    value_format_name: usd
+  }
+
+  measure: total_cost_previous {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${cost} ;;
+    description: "Total cost from the platform"
+    label: "Cost (Previous Period)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Previous Period"]
+    value_format_name: usd
+  }
+
+  measure: total_cost_percent_change {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: number
+    sql: 1.0* (${total_cost_current} - ${total_cost_previous})/NULLIF(${total_cost_previous},0) ;;
+    description: "Total cost from the platform"
+    label: "Cost (% Change vs Previous)"
+    group_label: "Platform Metrics"
+    value_format_name: percent_1
+    html: @{html_arrows_up_bad} {{rendered_value}};;
+  }
+
+  measure: total_cost_w_percent_change {
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${cost} ;;
+    description: "Total cost from the platform"
+    label: "Cost (% Change vs Previous)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Current Period"]
+    value_format_name: usd
+    html: @{html_arrows_up_bad}
+          {{rendered_value}}
+          <font color="{{indicator[0]}}">( {{total_cost_percent_change._rendered_value}} {{indicator[1]}} )</font> ;;
+  }
+
+
+  #clicks
+  measure: total_clicks_current {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${clicks} ;;
+    description: "Total clicks from the platform"
+    label: "Clicks (Current Period)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Current Period"]
+  }
+
+  measure: total_clicks_previous {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${clicks} ;;
+    description: "Total clicks from the platform"
+    label: "Clicks (Previous Period)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Previous Period"]
+  }
+
+  measure: total_clicks_percent_change {
+    hidden: yes
+    view_label: "Z) Period Over Period Analysis"
+    type: number
+    sql: 1.0* (${total_clicks_current} - ${total_clicks_previous})/NULLIF(${total_clicks_previous},0) ;;
+    description: "Total clicks from the platform"
+    label: "Clicks % Change"
+    group_label: "Platform Metrics"
+    value_format_name: percent_1
+    html: @{html_arrows_up_good} {{rendered_value}};;
+  }
+
+  measure: total_clicks_w_percent_change {
+    view_label: "Z) Period Over Period Analysis"
+    type: sum
+    sql: ${clicks} ;;
+    description: "Total clicks from the platform"
+    label: "Clicks (% Change vs Previous)"
+    group_label: "Platform Metrics"
+    filters: [current_previous_period: "Current Period"]
+    html: @{html_arrows_up_good}
+          {{rendered_value}}
+          <font color="{{indicator[0]}}">( {{total_clicks_percent_change._rendered_value}} {{indicator[1]}} )</font> ;;
+  }
+
+
+
+
+}
