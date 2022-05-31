@@ -20,6 +20,10 @@ constant: html_arrows_up_bad {
           {% endif %}"
 }
 
+constant: apply_font_and_arrows {
+  value: "<font color=\"{{indicator[0]}}\">( {{rendered_value}} {{indicator[1]}} )</font>"
+}
+
 # # Use local_dependency: To enable referencing of another project
 # # on this instance with include: statements
 #
