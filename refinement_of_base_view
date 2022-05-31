@@ -54,24 +54,23 @@ view: +industry_view {
     type: number
     sql: 1.0* (${total_cost_current} - ${total_cost_previous})/NULLIF(${total_cost_previous},0) ;;
     description: "Total cost from the platform"
-    label: "Cost (% Change vs Previous)"
+    label: "Cost % Change vs Previous"
     group_label: "Platform Metrics"
     value_format_name: percent_1
-    html: @{html_arrows_up_bad} {{rendered_value}};;
+    html: @{html_arrows_up_bad} @{apply_font_and_arrows} ;;
   }
 
   measure: total_cost_w_percent_change {
     view_label: "Z) Period Over Period Analysis"
-    type: sum
-    sql: ${cost} ;;
+    type: number
+    sql: ${total_cost_percent_change} ;;
     description: "Total cost from the platform"
     label: "Cost (% Change vs Previous)"
     group_label: "Platform Metrics"
-    filters: [current_previous_period: "Current Period"]
-    value_format_name: usd
-    html: @{html_arrows_up_bad}
-          {{rendered_value}}
-          <font color="{{indicator[0]}}">( {{total_cost_percent_change._rendered_value}} {{indicator[1]}} )</font> ;;
+    value_format_name: percent_1
+    order_by_field: total_cost_current
+    html: @{html_arrows_up_bad} {{total_cost_current._rendered_value}} @{apply_font_and_arrows}
+      ;;
   }
 
 
@@ -107,20 +106,20 @@ view: +industry_view {
     label: "Clicks % Change"
     group_label: "Platform Metrics"
     value_format_name: percent_1
-    html: @{html_arrows_up_good} {{rendered_value}};;
+    html: @{html_arrows_up_good} @{apply_font_and_arrows};;
   }
 
   measure: total_clicks_w_percent_change {
     view_label: "Z) Period Over Period Analysis"
-    type: sum
-    sql: ${clicks} ;;
+    type: number
+    sql: ${total_clicks_percent_change} ;;
     description: "Total clicks from the platform"
     label: "Clicks (% Change vs Previous)"
     group_label: "Platform Metrics"
-    filters: [current_previous_period: "Current Period"]
-    html: @{html_arrows_up_good}
-          {{rendered_value}}
-          <font color="{{indicator[0]}}">( {{total_clicks_percent_change._rendered_value}} {{indicator[1]}} )</font> ;;
+    value_format_name: percent_1
+    order_by_field: total_clicks_current
+    html: @{html_arrows_up_good} {{total_clicks_current._rendered_value}} @{apply_font_and_arrows}
+           ;;
   }
 
 
